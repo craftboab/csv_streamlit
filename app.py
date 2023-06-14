@@ -21,7 +21,7 @@ import openai
 PDF_DATA_DIR = "./pdf_data/"
 STORAGE_DIR = "./storage/"
 
-OPENAI_API_KEY = st.secrets.OpenAIAPI.openai_api_key
+os.environ["OPENAI_API_KEY"] = st.secrets.OpenAIAPI.openai_api_key
 # openai.api_key = st.secrets.OpenAIAPI.openai_api_key
 
 os.makedirs(PDF_DATA_DIR, exist_ok=True)
