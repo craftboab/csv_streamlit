@@ -15,8 +15,18 @@ from llama_index import (
 from langchain import OpenAI
 import openai
 
+#開発
+from dotenv import load_dotenv
+load_dotenv()
+
+#本番
+# os.environ["OPENAI_API_KEY"] = st.secrets.OpenAIAPI.openai_api_key
+
+
+
 PDF_DATA_DIR = "./pdf_data/"
 STORAGE_DIR = "./storage/"
+
 
 os.makedirs(PDF_DATA_DIR, exist_ok=True)
 
@@ -28,9 +38,17 @@ class PDFReader:
         return self.pdf_reader.load_data(file=Path(PDF_DATA_DIR + file_name))
 
 
+
+
+
+
+
+
+
+
 class QAResponseGenerator:
-    def __init__(self, selected_model, pdf_reader, api_key):
-        self.llm_predictor = LLMPredictor(llm=OpenAI(temperature=0, model_name=selected_model, api_key=api_key))
+    def __init__(self, selected_model, pdf_reader):
+        self.llm_predictor = LLMPredictor(llm=OpenAI(temperature=0, model_name=selected_model))
         self.pdf_reader = pdf_reader
         self.QA_PROMPT_TMPL = (
             "下記の情報が与えられています。 \n"
@@ -83,9 +101,8 @@ def display_chat(chat_history):
 def main():
     st.title('PDF Q&A app')
 
-    openai_api_key = st.sidebar.text_input("Enter your OPENAI_API_KEY")
     upload_pdf_file()
-    file_name = st.sidebar.selectbox("Choose a file", os.listdir(PDF_DATA_DIR))
+    file_name = st.sidebar.selectbox("Choose a file", os.listdir(PDF_DATA_DIR)) 
     selected_model = st.sidebar.selectbox("Choose a model", ["gpt-3.5-turbo", "gpt-4"])
     choice = st.radio("参照情報を表示:", ["表示する", "表示しない"])
     question = st.text_input("Your question")
@@ -102,8 +119,7 @@ def main():
         st.session_state["chat_history"] = []
 
     pdf_reader = PDFReader()
-    response_generator = QAResponseGenerator(selected_model, pdf_reader, openai_api_key)
-    
+    response_generator = QAResponseGenerator(selected_model, pdf_reader)
     # ボタンがクリックされた場合の処理
     if submit_question:
         if question:  # 質問が入力されている場合
@@ -116,6 +132,7 @@ def main():
             st.session_state["chat_history"].append({"bot": response})
 
     display_chat(st.session_state["chat_history"])
+
 
 if __name__ == "__main__":
     main()
