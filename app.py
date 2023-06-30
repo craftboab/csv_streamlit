@@ -20,6 +20,8 @@ STORAGE_DIR = "./storage/"
 
 os.makedirs(PDF_DATA_DIR, exist_ok=True)
 
+openai_api_key = st.secrets.OpenAIAPI.openai_api_key
+
 class PDFReader:
     def __init__(self):
         self.pdf_reader = download_loader("PDFReader")()
@@ -83,7 +85,7 @@ def display_chat(chat_history):
 def main():
     st.title('PDF Q&A app')
 
-    openai_api_key = st.sidebar.text_input("Enter your OPENAI_API_KEY")
+    # openai_api_key = st.sidebar.text_input("Enter your OPENAI_API_KEY")
     upload_pdf_file()
     file_name = st.sidebar.selectbox("Choose a file", os.listdir(PDF_DATA_DIR))
     selected_model = st.sidebar.selectbox("Choose a model", ["gpt-3.5-turbo", "gpt-4"])
